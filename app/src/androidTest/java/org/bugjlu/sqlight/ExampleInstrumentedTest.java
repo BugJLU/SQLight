@@ -1,4 +1,4 @@
-package pers.ownsky.sqlight;
+package org.bugjlu.sqlight;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("pers.ownsky.sqlight", appContext.getPackageName());
+        assertEquals("org.bugjlu.sqlight", appContext.getPackageName());
     }
 }

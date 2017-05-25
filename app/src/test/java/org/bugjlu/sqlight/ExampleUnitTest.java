@@ -1,4 +1,4 @@
-package pers.ownsky.sqlight;
+package org.bugjlu.sqlight;
 
 import org.junit.Test;
 

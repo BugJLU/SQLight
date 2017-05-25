@@ -1,9 +1,12 @@
-package pers.ownsky.sqlight;
+package org.bugjlu.sqlight;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,18 +14,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import android.net.Uri;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DBListActivity extends AppCompatActivity {
 
@@ -32,14 +36,22 @@ public class DBListActivity extends AppCompatActivity {
      */
     private GoogleApiClient client;
     private ListView mainList;
-    private HashMap<String, String> dbList;
+    private List<Map<String, String>> dbList;
 
 
     protected void addDB(String dbname) {
 
     }
+    protected boolean dbExist(String dbname) {
+        // TODO: to be finished.
+        return false;
+    }
     protected void refreshList() {
-        dbList.put("a", "a.txt");
+        // TODO: This is currently a test code, to be finished.
+        HashMap m = new HashMap<String, String>();
+        m.put("title", "db1");
+        m.put("info", "db1.db");
+        dbList.add(m);
         mainList.setAdapter(mainList.getAdapter());
     }
 
@@ -49,9 +61,10 @@ public class DBListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dblist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        dbList = new ArrayList<>();
         mainList = (ListView) findViewById(R.id.mainList);
         mainList.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_list,
-                new String[] {"name"},
+                new String[] {"title"},
                 new int[] {R.id.rowTitle}));
         refreshList();
 
@@ -136,4 +149,15 @@ public class DBListActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+// TODO: JNI
+//    /**
+//     * A native method that is implemented by the 'native-lib' native library,
+//     * which is packaged with this application.
+//     */
+//    public native String stringFromJNI();
+//
+//    // Used to load the 'native-lib' library on application startup.
+//    static {
+//        System.loadLibrary("native-lib");
+//    }
 }
