@@ -1,7 +1,9 @@
 package org.bugjlu.sqlight;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,9 +40,28 @@ public class DBListActivity extends AppCompatActivity {
     private ListView mainList;
     private List<Map<String, String>> dbList;
 
+    private class DBDataHandler {
+        SQLiteDatabase db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
+        public DBDataHandler() {
+            db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title));");
+        }
+        public List<Map<String, String>> getList() {
+            List<Map<String, String>> list = new ArrayList<>();
+            //TODO:
+            return list;
+        }
+        public void addList(String dbname, String dbfile) {
+            db.execSQL("");
+        }
+    }
 
     protected void addDB(String dbname) {
-
+        // TODO: to be finished.
+        HashMap m = new HashMap<String, String>();
+        m.put("title", dbname);
+        m.put("info", dbname+".db");
+        dbList.add(m);
+        refreshList();
     }
     protected boolean dbExist(String dbname) {
         // TODO: to be finished.
