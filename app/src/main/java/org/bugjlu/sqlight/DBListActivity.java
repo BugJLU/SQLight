@@ -3,8 +3,10 @@ package org.bugjlu.sqlight;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -106,6 +108,19 @@ public class DBListActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("取消", null)
                         .show();
+            }
+        });
+        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, String> map = (HashMap<String, String>) mainList.getItemAtPosition(position);
+                String dbname = map.get("title"),
+                        dbfile = map.get("info");
+                Intent intent = new Intent();
+                intent.putExtra("title", "sqlighttest");
+                intent.putExtra("info", "sqlighttest.db");
+                intent.setClass(DBListActivity.this, DBExecActivity.class);
+                startActivity(intent);
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
