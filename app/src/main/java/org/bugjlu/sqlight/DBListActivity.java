@@ -10,9 +10,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -86,7 +84,7 @@ public class DBListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         dbList = new ArrayList<>();
         mainList = (ListView) findViewById(R.id.mainList);
-        mainList.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_list,
+        mainList.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_dblist,
                 new String[] {"title"},
                 new int[] {R.id.rowTitle}));
         refreshList();
