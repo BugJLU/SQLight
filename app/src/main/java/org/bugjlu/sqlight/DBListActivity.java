@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.AdapterView;
@@ -39,28 +40,45 @@ public class DBListActivity extends AppCompatActivity {
     private GoogleApiClient client;
     private ListView mainList;
     private List<Map<String, String>> dbList;
+    DBDataHandler dbHandler;
 
     private class DBDataHandler {
-        SQLiteDatabase db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
+        SQLiteDatabase db;
         public DBDataHandler() {
-            db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title));");
+            db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
+            db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title), unique(info));");
         }
         public List<Map<String, String>> getList() {
             List<Map<String, String>> list = new ArrayList<>();
             //TODO:
+            String stmt = "select title,info from dbinfo ;";
+            Cursor cursor = db.rawQuery(stmt, null);
+            String[] names = cursor.getColumnNames();
+            String str ;
+            while (cursor.moveToNext()) {
+                Map<String, String> res = new HashMap<>();
+                for (String i : names) {
+                    str = cursor.getString(cursor.getColumnIndex(i));
+                    res.put(i, str);
+                }
+                list.add(res);
+            }
             return list;
         }
         public void addList(String dbname, String dbfile) {
-            db.execSQL("");
+            db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
+        }
+        public void removeList(String dbname) {
+            db.execSQL("delete from dbinfo where title = '"+dbname+"';");
         }
     }
-
+    protected void removeDB(String dbname) {
+        dbHandler.removeList(dbname);
+        refreshList();
+    }
     protected void addDB(String dbname) {
         // TODO: to be finished.
-        HashMap m = new HashMap<String, String>();
-        m.put("title", dbname);
-        m.put("info", dbname+".db");
-        dbList.add(m);
+        dbHandler.addList(dbname, dbname+".db");
         refreshList();
     }
     protected boolean dbExist(String dbname) {
@@ -69,10 +87,8 @@ public class DBListActivity extends AppCompatActivity {
     }
     protected void refreshList() {
         // TODO: This is currently a test code, to be finished.
-        HashMap m = new HashMap<String, String>();
-        m.put("title", "db1");
-        m.put("info", "db1.db");
-        dbList.add(m);
+        dbList.clear();
+        dbList.addAll(dbHandler.getList());
         mainList.setAdapter(mainList.getAdapter());
     }
 
@@ -83,6 +99,7 @@ public class DBListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dbList = new ArrayList<>();
+        dbHandler = new DBDataHandler();
         mainList = (ListView) findViewById(R.id.mainList);
         mainList.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_dblist,
                 new String[] {"title"},
@@ -115,8 +132,8 @@ public class DBListActivity extends AppCompatActivity {
                 String dbname = map.get("title"),
                         dbfile = map.get("info");
                 Intent intent = new Intent();
-                intent.putExtra("title", "sqlighttest");
-                intent.putExtra("info", "sqlighttest.db");
+                intent.putExtra("title", dbname);
+                intent.putExtra("info", dbfile);
                 intent.setClass(DBListActivity.this, DBExecActivity.class);
                 startActivity(intent);
             }
