@@ -31,10 +31,11 @@ public class DBExecActivity extends AppCompatActivity {
     String dbname, dbfile;
     IDBExecHandler execHandler;
     EditText stmtText;
-    ScrollView stmtView;
-    ListView resultView;
+    EditText resultText;
+    ScrollView stmtView, resultView;
+    String prefix;
     //TODO: test start
-    List<Map<String, String>> dbList;
+//    List<Map<String, String>> dbList;
     //TODO: test end
 
     @Override
@@ -43,18 +44,19 @@ public class DBExecActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dbexec);
         stmtText = (EditText) findViewById(R.id.stmtText);
         stmtView = (ScrollView) findViewById(R.id.stmtView);
-        resultView = (ListView) findViewById(R.id.resultList);
-
+        resultView = (ScrollView) findViewById(R.id.resultView);
+        resultText = (EditText) findViewById(R.id.resultText);
+        stmtText.clearFocus();
         //TODO: test start
-        dbList = new ArrayList<> ();
-        resultView.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_execlist,
-                new String[] {"title"},
-                new int[] {R.id.rowTitle}));
-        HashMap m = new HashMap<String, String>();
-        m.put("title", "db1");
-        m.put("info", "db1.db");
-        dbList.add(m);
-        resultView.setAdapter(resultView.getAdapter());
+//        dbList = new ArrayList<> ();
+//        resultView.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_execlist,
+//                new String[] {"title"},
+//                new int[] {R.id.rowTitle}));
+//        HashMap m = new HashMap<String, String>();
+//        m.put("title", "db1");
+//        m.put("info", "db1.db");
+//        dbList.add(m);
+//        resultView.setAdapter(resultView.getAdapter());
         //TODO: test end
 
         stmtText.setOnKeyListener(new View.OnKeyListener() {
@@ -104,6 +106,7 @@ public class DBExecActivity extends AppCompatActivity {
         dbname = bundle.getString("title");
         dbfile = bundle.getString("info");
         connectDB(dbfile);
+        prefix = execHandler.getDBProduct() + "$ ";
     }
 
     @Override
@@ -119,16 +122,21 @@ public class DBExecActivity extends AppCompatActivity {
         execHandler.close();
     }
     protected void execDB() {
-        String result = execHandler.exec(stmtText.getText().toString());
+        String stmt = stmtText.getText().toString();
+        stmt = stmt.replace("\n", " ");
+        String result = execHandler.exec(stmt);
         stmtText.clearFocus();
         ((InputMethodManager) DBExecActivity.this
                 .getSystemService(Context.INPUT_METHOD_SERVICE)).
                 hideSoftInputFromWindow(stmtText.getWindowToken(), 0);
+        resultText.append(prefix + stmt + "\n");
+        resultText.append(result+"\n");
         //TODO: test start
-        HashMap m = new HashMap<String, String>();
-        m.put("title", result);
-        dbList.add(m);
-        resultView.setAdapter(resultView.getAdapter());
+//        HashMap m = new HashMap<String, String>();
+//        m.put("title", result);
+//        dbList.add(m);
+
+//        resultView.setAdapter(resultView.getAdapter());
         //TODO: test end
     }
 //    protected

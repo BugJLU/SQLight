@@ -55,6 +55,11 @@ public class SQLiteHandler implements IDBExecHandler {
         }
     }
 
+    @Override
+    public String getDBProduct() {
+        return "SQLite";
+    }
+
     private String execQuery(String stmt) {
         StringBuilder result = new StringBuilder("");
         Cursor cursor = db.rawQuery(stmt, null);
@@ -71,4 +76,5 @@ public class SQLiteHandler implements IDBExecHandler {
         }
         return result.toString();
     }
+
 }
