@@ -66,10 +66,12 @@ public class DBListActivity extends AppCompatActivity {
             return list;
         }
         public void addList(String dbname, String dbfile) {
-            db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
+//            db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
+            db.execSQL("INSERT INTO dbinfo(title, info) VALUES(?, ?);", new Object[]{dbname, dbfile});
         }
         public void removeList(String dbname) {
-            db.execSQL("delete from dbinfo where title = '"+dbname+"';");
+//            db.execSQL("delete from dbinfo where title = '"+dbname+"';");
+            db.execSQL("DELETE FROM dbinfo WHERE title = ? ;", new Object[]{dbname});
         }
     }
     protected void removeDB(String dbname) {
@@ -138,6 +140,35 @@ public class DBListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                HashMap<String, String> map = (HashMap<String, String>) parent.getItemAtPosition(position);
+
+                final String dbname = map.get("title");
+                String dbfile = map.get("info");
+
+                new AlertDialog.Builder(DBListActivity.this)
+                        .setTitle("Delete " + dbname + "?")
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                removeDB(dbname);
+                            }
+                        }).show();
+
+                return true;
+            }
+        });
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
