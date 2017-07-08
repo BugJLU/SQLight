@@ -46,17 +46,19 @@ public class DBListActivity extends AppCompatActivity {
 
     private class DBDataHandler {
         SQLiteDatabase db;
-        public DBDataHandler() {
+
+        DBDataHandler() {
             db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
             db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title), unique(info));");
         }
-        public List<Map<String, String>> getList() {
+
+        List<Map<String, String>> getList() {
             List<Map<String, String>> list = new ArrayList<>();
             //TODO:
             String stmt = "select title,info from dbinfo ;";
             Cursor cursor = db.rawQuery(stmt, null);
             String[] names = cursor.getColumnNames();
-            String str ;
+            String str;
             while (cursor.moveToNext()) {
                 Map<String, String> res = new HashMap<>();
                 for (String i : names) {
@@ -65,35 +67,42 @@ public class DBListActivity extends AppCompatActivity {
                 }
                 list.add(res);
             }
+            cursor.close();
             return list;
         }
-        public void addList (String dbname, String dbfile)throws Exception {
-//            db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
-            try{
+
+        void addList(String dbname, String dbfile) throws Exception {
+//          db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
+            try {
                 db.execSQL("INSERT INTO dbinfo(title, info) VALUES(?, ?);", new Object[]{dbname, dbfile});
-            }catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "所建数据库已存在",
                         Toast.LENGTH_SHORT).show();
             }
         }
-        public void removeList(String dbname) {
-//            db.execSQL("delete from dbinfo where title = '"+dbname+"';");
+
+        void removeList(String dbname) {
+//          db.execSQL("delete from dbinfo where title = '"+dbname+"';");
             db.execSQL("DELETE FROM dbinfo WHERE title = ? ;", new Object[]{dbname});
         }
     }
+
     protected void removeDB(String dbname) {
         dbHandler.removeList(dbname);
         refreshList();
     }
+
     protected void addDB(String dbname) throws Exception {
         // TODO: to be finished.
-        dbHandler.addList(dbname, dbname+".db");
+        dbHandler.addList(dbname, dbname + ".db");
         refreshList();
     }
+
     protected boolean dbExist(String dbname) {
         // TODO: to be finished.
         return false;
     }
+
     protected void refreshList() {
         // TODO: This is currently a test code, to be finished.
         dbList.clear();
@@ -111,8 +120,8 @@ public class DBListActivity extends AppCompatActivity {
         dbHandler = new DBDataHandler();
         mainList = (ListView) findViewById(R.id.mainList);
         mainList.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_dblist,
-                new String[] {"title"},
-                new int[] {R.id.rowTitle}));
+                new String[]{"title"},
+                new int[]{R.id.rowTitle}));
         refreshList();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -120,30 +129,35 @@ public class DBListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final EditText et = new EditText(DBListActivity.this);
+                et.setSingleLine();
                 new AlertDialog.Builder(DBListActivity.this).setTitle("数据库名称：").setIcon(null)
                         .setView(et)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String dbn = et.getText().toString();
-                                if (dbn == null || dbn.equals("")) return;
-                                else try {
-                                    addDB(dbn);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if (!dbn.equals("")) {
+                                    try {
+                                        addDB(dbn);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         })
-                        .setNegativeButton("取消", null)
+                        .setNegativeButton(R.string.button_cancel, null)
                         .show();
             }
         });
+
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> map = (HashMap<String, String>) mainList.getItemAtPosition(position);
-                String dbname = map.get("title"),
-                        dbfile = map.get("info");
+                String dbname = map.get("title");
+                String dbfile = map.get("info");
                 Intent intent = new Intent();
                 intent.putExtra("title", dbname);
                 intent.putExtra("info", dbfile);
@@ -152,14 +166,16 @@ public class DBListActivity extends AppCompatActivity {
             }
         });
 
+
         mainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                 HashMap<String, String> map = (HashMap<String, String>) parent.getItemAtPosition(position);
 
                 final String dbname = map.get("title");
-                String dbfile = map.get("info");
 
                 new AlertDialog.Builder(DBListActivity.this)
                         .setTitle("Delete " + dbname + "?")
