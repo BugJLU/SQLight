@@ -2,6 +2,7 @@ package org.bugjlu.sqlight;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,18 +14,12 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.bugjlu.sqlight.dbexec_handlers.IDBExecHandler;
 import org.bugjlu.sqlight.dbexec_handlers.SQLiteHandler;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DBExecActivity extends AppCompatActivity {
 
@@ -36,9 +31,6 @@ public class DBExecActivity extends AppCompatActivity {
     ScrollView stmtView, resultView;
     Button execButton;
     String prefix;
-    //TODO: test start
-//    List<Map<String, String>> dbList;
-    //TODO: test end
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,32 +46,39 @@ public class DBExecActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         stmtText.clearFocus();
         execButton.requestFocus();
-        //TODO: test start
-//        dbList = new ArrayList<> ();
-//        resultView.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_execlist,
-//                new String[] {"title"},
-//                new int[] {R.id.rowTitle}));
-//        HashMap m = new HashMap<String, String>();
-//        m.put("title", "db1");
-//        m.put("info", "db1.db");
-//        dbList.add(m);
-//        resultView.setAdapter(resultView.getAdapter());
-        //TODO: test end
 
-        stmtText.setOnKeyListener(new View.OnKeyListener() {
+//        stmtText.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_BACK)) {
+//                    stmtText.clearFocus();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
+//        stmtText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
+//                    animation.setDuration(100);
+//                    resultView.setAnimation(animation);
+//                    resultView.setVisibility(View.GONE);
+//                } else {
+//                    resultView.setVisibility(View.VISIBLE);
+//                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
+//                    animation.setDuration(100);
+//                    resultView.setAnimation(animation);
+//                }
+//            }
+//        });
+
+        new KeyboardChangeListener(this).setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_BACK)) {
-                    stmtText.clearFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
-        stmtText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
+            public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+                if(isShow) {
                     Animation animation = new AlphaAnimation(1.0f, 0.0f);
                     animation.setDuration(100);
                     resultView.setAnimation(animation);
@@ -92,6 +91,7 @@ public class DBExecActivity extends AppCompatActivity {
                 }
             }
         });
+
         stmtText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -102,18 +102,34 @@ public class DBExecActivity extends AppCompatActivity {
                 return false;
             }
         });
-        ((Button) findViewById(R.id.execButton)).setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.execButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 execDB();
             }
         });
+
         startIntent = getIntent();
         Bundle bundle = startIntent.getExtras();
         dbname = bundle.getString("title");
         dbfile = bundle.getString("info");
         connectDB(dbfile);
         prefix = execHandler.getDBProduct() + "$ ";
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
+            resultView.setVisibility(View.GONE);
+        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
+            resultView.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
@@ -125,9 +141,11 @@ public class DBExecActivity extends AppCompatActivity {
     protected void connectDB(String dbfile) {
         execHandler = SQLiteHandler.openSQLiteDB(this, dbfile);
     }
+
     protected void disconnectDB() {
         execHandler.close();
     }
+
     protected void execDB() {
         String stmt = stmtText.getText().toString();
         stmt = stmt.replace("\n", " ");

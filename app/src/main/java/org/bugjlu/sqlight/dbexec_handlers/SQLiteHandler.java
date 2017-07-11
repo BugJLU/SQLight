@@ -50,7 +50,7 @@ public class SQLiteHandler implements IDBExecHandler {
             if (e.getMessage().contains("Queries can be performed using SQLiteDatabase query or rawQuery methods only.")) {
                 return execQuery(stmt+"\n");
             } else {
-                return e.getMessage();
+                return e.getMessage()+"\n";
             }
         }
     }
