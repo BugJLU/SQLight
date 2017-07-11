@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
@@ -33,6 +34,7 @@ public class DBExecActivity extends AppCompatActivity {
     EditText stmtText;
     EditText resultText;
     ScrollView stmtView, resultView;
+    Button execButton;
     String prefix;
     //TODO: test start
 //    List<Map<String, String>> dbList;
@@ -46,7 +48,12 @@ public class DBExecActivity extends AppCompatActivity {
         stmtView = (ScrollView) findViewById(R.id.stmtView);
         resultView = (ScrollView) findViewById(R.id.resultView);
         resultText = (EditText) findViewById(R.id.resultText);
+        resultText.setSelection(resultText.getText().length(), resultText.getText().length());
+        execButton = (Button) findViewById(R.id.execButton);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         stmtText.clearFocus();
+        execButton.requestFocus();
         //TODO: test start
 //        dbList = new ArrayList<> ();
 //        resultView.setAdapter(new SimpleAdapter(this, dbList, R.layout.row_execlist,

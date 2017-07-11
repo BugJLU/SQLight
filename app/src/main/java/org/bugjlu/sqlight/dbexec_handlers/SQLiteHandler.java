@@ -45,10 +45,10 @@ public class SQLiteHandler implements IDBExecHandler {
     public String exec(String stmt) {
         try {
             db.execSQL(stmt);
-            return "Statement: \"" + stmt +"\" Execute Success.";
+            return "Statement Execute Success.\n";
         } catch (SQLiteException e) {
             if (e.getMessage().contains("Queries can be performed using SQLiteDatabase query or rawQuery methods only.")) {
-                return execQuery(stmt);
+                return execQuery(stmt+"\n");
             } else {
                 return e.getMessage();
             }

@@ -66,11 +66,9 @@ public class DBListActivity extends AppCompatActivity {
             return list;
         }
         public void addList(String dbname, String dbfile) {
-//            db.execSQL("insert into dbinfo values('"+dbname+"','"+dbfile+"');");
             db.execSQL("INSERT INTO dbinfo(title, info) VALUES(?, ?);", new Object[]{dbname, dbfile});
         }
         public void removeList(String dbname) {
-//            db.execSQL("delete from dbinfo where title = '"+dbname+"';");
             db.execSQL("DELETE FROM dbinfo WHERE title = ? ;", new Object[]{dbname});
         }
     }
@@ -83,12 +81,7 @@ public class DBListActivity extends AppCompatActivity {
         dbHandler.addList(dbname, dbname+".db");
         refreshList();
     }
-    protected boolean dbExist(String dbname) {
-        // TODO: to be finished.
-        return false;
-    }
     protected void refreshList() {
-        // TODO: This is currently a test code, to be finished.
         dbList.clear();
         dbList.addAll(dbHandler.getList());
         mainList.setAdapter(mainList.getAdapter());
@@ -127,6 +120,7 @@ public class DBListActivity extends AppCompatActivity {
                         .show();
             }
         });
+
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,13 +145,8 @@ public class DBListActivity extends AppCompatActivity {
                 String dbfile = map.get("info");
 
                 new AlertDialog.Builder(DBListActivity.this)
-                        .setTitle("Delete " + dbname + "?")
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
+                        .setTitle("Delete \"" + dbname + "\"?")
+                        .setNegativeButton("Cancel", null)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

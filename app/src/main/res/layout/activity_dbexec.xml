@@ -33,12 +33,13 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_margin="10dp"
                     android:inputType="textMultiLine"
                     android:editable="false"
                     android:enabled="false"
                     android:textColor="#FF000000"
                     android:textSize="12dp"
+                    android:background="@null"
                     android:ems="10"
                     android:id="@+id/resultText" />
             </ScrollView>
@@ -55,11 +56,12 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_margin="10dp"
                     android:imeActionLabel="Execute"
                     android:imeOptions="actionSend"
                     android:inputType="textMultiLine"
                     android:text="SELECT * FROM TESTTABLE"
+                    android:background="@null"
                     android:ems="10"
                     android:id="@+id/stmtText"
                     android:layout_weight="1" />
