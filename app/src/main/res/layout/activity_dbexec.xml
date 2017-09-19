@@ -17,6 +17,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/clrResBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clear Result" />
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_weight="1"
@@ -24,48 +30,49 @@
             android:layout_height="match_parent">
 
             <ScrollView
+                android:id="@+id/resultView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/text_border"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:id="@+id/resultView"
-                android:layout_margin="5dp">
+                android:background="@drawable/text_border">
 
                 <EditText
+                    android:id="@+id/resultText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:inputType="textMultiLine"
-                    android:editable="false"
-                    android:enabled="false"
-                    android:textColor="#FF000000"
-                    android:textSize="12dp"
                     android:background="@null"
+                    android:editable="false"
                     android:ems="10"
-                    android:id="@+id/resultText" />
+                    android:enabled="false"
+                    android:inputType="textMultiLine"
+                    android:textColor="#FF000000"
+                    android:textSize="12dp" />
             </ScrollView>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:clickable="true"
                 android:background="@drawable/text_border"
                 android:id="@+id/stmtView"
                 android:layout_margin="5dp">
 
 
                 <EditText
+                    android:id="@+id/stmtText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:ems="10"
                     android:imeActionLabel="Execute"
                     android:imeOptions="actionSend"
                     android:inputType="textMultiLine"
-                    android:text="SELECT * FROM TESTTABLE"
-                    android:background="@null"
-                    android:ems="10"
-                    android:id="@+id/stmtText"
-                    android:layout_weight="1" />
+                    android:text="SELECT * FROM TESTTABLE" />
             </ScrollView>
 
         </LinearLayout>
@@ -77,17 +84,10 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:text="Button"
+                android:text="Clear SQL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/button4"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button3"
+                android:id="@+id/clrSqlBtn"
                 android:layout_weight="1" />
 
             <Button

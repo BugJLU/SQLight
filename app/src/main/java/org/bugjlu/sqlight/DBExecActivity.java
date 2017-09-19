@@ -2,7 +2,6 @@ package org.bugjlu.sqlight;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -47,34 +46,6 @@ public class DBExecActivity extends AppCompatActivity {
         stmtText.clearFocus();
         execButton.requestFocus();
 
-//        stmtText.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_BACK)) {
-//                    stmtText.clearFocus();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-
-//        stmtText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (hasFocus) {
-//                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
-//                    animation.setDuration(100);
-//                    resultView.setAnimation(animation);
-//                    resultView.setVisibility(View.GONE);
-//                } else {
-//                    resultView.setVisibility(View.VISIBLE);
-//                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
-//                    animation.setDuration(100);
-//                    resultView.setAnimation(animation);
-//                }
-//            }
-//        });
-
         new KeyboardChangeListener(this).setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
             @Override
             public void onKeyboardChange(boolean isShow, int keyboardHeight) {
@@ -83,12 +54,22 @@ public class DBExecActivity extends AppCompatActivity {
                     animation.setDuration(100);
                     resultView.setAnimation(animation);
                     resultView.setVisibility(View.GONE);
+                    findViewById(R.id.clrResBtn).setVisibility(View.GONE);
                 } else {
                     resultView.setVisibility(View.VISIBLE);
                     Animation animation = new AlphaAnimation(0.0f, 1.0f);
                     animation.setDuration(100);
                     resultView.setAnimation(animation);
+                    findViewById(R.id.clrResBtn).setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        stmtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DBExecActivity.this, "view clicked", Toast.LENGTH_SHORT);
+                stmtText.performClick();
             }
         });
 
@@ -109,6 +90,18 @@ public class DBExecActivity extends AppCompatActivity {
                 execDB();
             }
         });
+        findViewById(R.id.clrSqlBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stmtText.setText(null);
+            }
+        });
+        findViewById(R.id.clrResBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resultText.setText(null);
+            }
+        });
 
         startIntent = getIntent();
         Bundle bundle = startIntent.getExtras();
@@ -116,20 +109,6 @@ public class DBExecActivity extends AppCompatActivity {
         dbfile = bundle.getString("info");
         connectDB(dbfile);
         prefix = execHandler.getDBProduct() + "$ ";
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
-            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
-            resultView.setVisibility(View.GONE);
-        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
-            resultView.setVisibility(View.VISIBLE);
-        }
-
     }
 
     @Override
@@ -156,13 +135,5 @@ public class DBExecActivity extends AppCompatActivity {
                 hideSoftInputFromWindow(stmtText.getWindowToken(), 0);
         resultText.append(prefix + stmt + "\n");
         resultText.append(result+"\n");
-        //TODO: test start
-//        HashMap m = new HashMap<String, String>();
-//        m.put("title", result);
-//        dbList.add(m);
-
-//        resultView.setAdapter(resultView.getAdapter());
-        //TODO: test end
     }
-//    protected
 }
