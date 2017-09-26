@@ -11,6 +11,6 @@ import java.io.Closeable;
 public interface IDBExecHandler extends Closeable {
     void startDB(Context context, String dbname);
     void close();
-    String exec(String stmt);
+    DBExecResult exec(String stmt);
     String getDBProduct();
 }

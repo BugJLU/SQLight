@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by mac on 2017/5/26.
  */
@@ -39,15 +42,15 @@ public class SQLiteHandler implements IDBExecHandler {
     }
 
     @Override
-    public String exec(String stmt) {
+    public DBExecResult exec(String stmt) {
         try {
             db.execSQL(stmt);
-            return "Statement Execute Success.\n";
+            return new DBExecResult("Statement Execute Success.\n");
         } catch (SQLiteException e) {
             if (e.getMessage().contains("Queries can be performed using SQLiteDatabase query or rawQuery methods only.")) {
-                return execQuery(stmt+"\n");
+                return new DBExecResult(execQuery(stmt));
             } else {
-                return e.getMessage()+"\n";
+                return new DBExecResult(e.getMessage() + "\n");
             }
         }
     }
@@ -57,21 +60,26 @@ public class SQLiteHandler implements IDBExecHandler {
         return "SQLite";
     }
 
-    private String execQuery(String stmt) {
-        StringBuilder result = new StringBuilder("");
+    private String[][] execQuery(String stmt) {
+        List<String[]> results = new LinkedList<>();
+
         Cursor cursor = db.rawQuery(stmt, null);
         String[] names = cursor.getColumnNames();
-        for (String i : names) {
-            result.append(i+"\t|");
-        }
-        result.append("\n");
+        results.add(names);
+
+        List<String> column;
         while (cursor.moveToNext()) {
+            column = new LinkedList<>();
+
             for (String i : names) {
-                result.append(cursor.getString(cursor.getColumnIndex(i))+"\t|");
+
+                column.add(cursor.getString(cursor.getColumnIndex(i)));
             }
-            result.append("\n");
+
+            results.add(column.toArray(new String[names.length]));
         }
-        return result.toString();
+        cursor.close();
+        return results.toArray(new String[names.length][results.size()]);
     }
 
 }

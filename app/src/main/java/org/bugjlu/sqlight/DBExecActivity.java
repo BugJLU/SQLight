@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.bugjlu.sqlight.dbexec_handlers.DBExecResult;
 import org.bugjlu.sqlight.dbexec_handlers.IDBExecHandler;
 import org.bugjlu.sqlight.dbexec_handlers.SQLiteHandler;
 
@@ -49,7 +50,7 @@ public class DBExecActivity extends AppCompatActivity {
         new KeyboardChangeListener(this).setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
             @Override
             public void onKeyboardChange(boolean isShow, int keyboardHeight) {
-                if(isShow) {
+                if (isShow) {
                     Animation animation = new AlphaAnimation(1.0f, 0.0f);
                     animation.setDuration(100);
                     resultView.setAnimation(animation);
@@ -128,12 +129,25 @@ public class DBExecActivity extends AppCompatActivity {
     protected void execDB() {
         String stmt = stmtText.getText().toString();
         stmt = stmt.replace("\n", " ");
-        String result = execHandler.exec(stmt);
+        DBExecResult result = execHandler.exec(stmt);
         stmtText.clearFocus();
         ((InputMethodManager) DBExecActivity.this
                 .getSystemService(Context.INPUT_METHOD_SERVICE)).
                 hideSoftInputFromWindow(stmtText.getWindowToken(), 0);
         resultText.append(prefix + stmt + "\n");
-        resultText.append(result+"\n");
+
+        if (result.isQuery()) {
+            Intent intent = new Intent();
+            intent.setClass(DBExecActivity.this,
+                    DBResultActivity.class);
+            intent.putExtra("execResult", result);
+            startActivity(intent);
+
+            resultText.append("result was shown in table view.\n");
+        } else {
+            resultText.append(result + "\n");
+        }
+
+
     }
 }
