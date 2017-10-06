@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import org.bugjlu.sqlight.dbexec_handlers.DBExecResult;
 import org.bugjlu.sqlight.dbexec_handlers.IDBExecHandler;
-import org.bugjlu.sqlight.dbexec_handlers.SQLiteHandler;
+import org.bugjlu.sqlight.dbexec_handlers.SQLiteApartHandler;
 
 public class DBExecActivity extends AppCompatActivity {
 
@@ -119,7 +119,7 @@ public class DBExecActivity extends AppCompatActivity {
     }
 
     protected void connectDB(String dbfile) {
-        execHandler = SQLiteHandler.openSQLiteDB(this, dbfile);
+        execHandler = SQLiteApartHandler.openSQLiteDB(this, dbfile);
     }
 
     protected void disconnectDB() {
