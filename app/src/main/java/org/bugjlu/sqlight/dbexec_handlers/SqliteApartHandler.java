@@ -6,6 +6,7 @@ import android.database.Cursor;
 import org.sqlite.database.sqlite.SQLiteDatabase;
 import org.sqlite.database.sqlite.SQLiteException;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,13 +16,13 @@ import java.util.List;
 
 public class SQLiteApartHandler implements IDBExecHandler {
 
+    static {
+        System.loadLibrary("sqliteX");
+    }
+
     String dbfile;
     Context context;
     SQLiteDatabase db;
-
-    public static SQLiteApartHandler openSQLiteDB(Context context, String dbfile) {
-        return new SQLiteApartHandler(context, dbfile);
-    }
 
     private SQLiteApartHandler(Context context, String dbfile) {
         this.context = context;
@@ -29,9 +30,14 @@ public class SQLiteApartHandler implements IDBExecHandler {
         startDB(context, dbfile);
     }
 
+    public static SQLiteApartHandler openSQLiteDB(Context context, String dbfile) {
+        return new SQLiteApartHandler(context, dbfile);
+    }
+
     @Override
     public void startDB(Context context, String dbfile) {
-        db = SQLiteDatabase.openOrCreateDatabase(dbfile, null);
+        File file = context.getDatabasePath(dbfile);
+        db = SQLiteDatabase.openOrCreateDatabase(file, null);
     }
 
     @Override

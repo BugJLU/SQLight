@@ -2,8 +2,9 @@ package org.bugjlu.sqlight;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import org.bugjlu.sqlight.dbexec_handlers.DBExecResult;
 import org.bugjlu.sqlight.dbexec_handlers.IDBExecHandler;
 import org.bugjlu.sqlight.dbexec_handlers.SQLiteApartHandler;
+import org.bugjlu.sqlight.dbexec_handlers.SQLiteHandler;
 
 public class DBExecActivity extends AppCompatActivity {
 
@@ -119,7 +121,20 @@ public class DBExecActivity extends AppCompatActivity {
     }
 
     protected void connectDB(String dbfile) {
-        execHandler = SQLiteApartHandler.openSQLiteDB(this, dbfile);
+
+        SharedPreferences sp = getSharedPreferences("sqlight", MODE_PRIVATE);
+        String engine = sp.getString("engine", "sqlite");
+
+        switch (engine) {
+            case "sqlite":
+            default:
+                execHandler = SQLiteHandler.openSQLiteDB(this, dbfile);
+                break;
+            case "sqlite_apart":
+                execHandler = SQLiteApartHandler.openSQLiteDB(this, dbfile);
+        }
+
+        //execHandler = SQLiteApartHandler.openSQLiteDB(this, dbfile);
     }
 
     protected void disconnectDB() {

@@ -4,78 +4,36 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.net.Uri;
-import android.widget.Toast;
-
 public class DBListActivity extends AppCompatActivity {
 
+    DBDataHandler dbHandler;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private ListView mainList;
     private List<Map<String, String>> dbList;
-    DBDataHandler dbHandler;
-
-    private class DBDataHandler {
-        SQLiteDatabase db;
-
-        DBDataHandler() {
-            db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
-            db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title), unique(info));");
-        }
-
-        List<Map<String, String>> getList() {
-            List<Map<String, String>> list = new ArrayList<>();
-            //TODO:
-            String stmt = "select title,info from dbinfo ;";
-            Cursor cursor = db.rawQuery(stmt, null);
-            String[] names = cursor.getColumnNames();
-            String str;
-            while (cursor.moveToNext()) {
-                Map<String, String> res = new HashMap<>();
-                for (String i : names) {
-                    str = cursor.getString(cursor.getColumnIndex(i));
-                    res.put(i, str);
-                }
-                list.add(res);
-            }
-            cursor.close();
-            return list;
-        }
-
-        void addList(String dbname, String dbfile) throws Exception {
-            try {
-                db.execSQL("INSERT INTO dbinfo(title, info) VALUES(?, ?);", new Object[]{dbname, dbfile});
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Database \""+dbname+"\" already exists.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        void removeList(String dbname) {
-            db.execSQL("DELETE FROM dbinfo WHERE title = ? ;", new Object[]{dbname});
-        }
-    }
 
     protected void removeDB(String dbname) {
         dbHandler.removeList(dbname);
@@ -192,6 +150,20 @@ public class DBListActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SharedPreferences sp = getSharedPreferences("sqlight", MODE_PRIVATE);
+            String engine = sp.getString("engine", "sqlite");
+
+            switch (engine) {
+                case "sqlite":
+                default:
+                    sp.edit().putString("engine", "sqlite_apart").apply();
+                    Toast.makeText(this, "Switched to SQLite_Apart", Toast.LENGTH_SHORT).show();
+                    break;
+                case "sqlite_apart":
+                    sp.edit().putString("engine", "sqlite").apply();
+                    Toast.makeText(this, "Switched to SQLite", Toast.LENGTH_SHORT).show();
+            }
+
             return true;
         }
 
@@ -208,6 +180,47 @@ public class DBListActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
 
+    }
+
+    private class DBDataHandler {
+        SQLiteDatabase db;
+
+        DBDataHandler() {
+            db = openOrCreateDatabase(".sqlightsaves.db", Context.MODE_PRIVATE, null);
+            db.execSQL("create table if not exists dbinfo(title varchar(10), info varchar(20) not null, primary key (title), unique(info));");
+        }
+
+        List<Map<String, String>> getList() {
+            List<Map<String, String>> list = new ArrayList<>();
+            //TODO:
+            String stmt = "select title,info from dbinfo ;";
+            Cursor cursor = db.rawQuery(stmt, null);
+            String[] names = cursor.getColumnNames();
+            String str;
+            while (cursor.moveToNext()) {
+                Map<String, String> res = new HashMap<>();
+                for (String i : names) {
+                    str = cursor.getString(cursor.getColumnIndex(i));
+                    res.put(i, str);
+                }
+                list.add(res);
+            }
+            cursor.close();
+            return list;
+        }
+
+        void addList(String dbname, String dbfile) throws Exception {
+            try {
+                db.execSQL("INSERT INTO dbinfo(title, info) VALUES(?, ?);", new Object[]{dbname, dbfile});
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "Database \"" + dbname + "\" already exists.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        void removeList(String dbname) {
+            db.execSQL("DELETE FROM dbinfo WHERE title = ? ;", new Object[]{dbname});
+        }
     }
 // TODO: JNI
 //    /**
