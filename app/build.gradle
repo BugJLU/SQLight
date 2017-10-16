@@ -24,6 +24,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     //TODO:Native
 //    externalNativeBuild {
 //        cmake {
@@ -41,5 +46,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.android.support:design:25.4.0'
     testCompile 'junit:junit:4.12'
-    compile name:'sqlite3-release', ext:'aar'
+    compile project(':sqlite3')
+    //compile name:'sqlite3-release', ext:'aar'
 }
